@@ -10,20 +10,19 @@
 (deftest incognito-roundtrip-test
   (testing "Test incognito transport."
     (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
-      (is (= #incognito.base.IncognitoTaggedLiteral{:tag incognito.fressian_test.Bar,
+      (is (= #incognito.base.IncognitoTaggedLiteral{:tag incognito.fressian-test/Bar,
                                                     :value {:a [1 2 3],
                                                             :b {:c "Fooos"}
                                                             :c "donkey"}}
              (with-open [baos (ByteArrayOutputStream.)]
-               (let [read-handlers (atom {'incognito.fressian_test.Bar map->Bar})
-                     write-handlers (atom {incognito.fressian_test.Bar
+               (let [write-handlers (atom {'incognito.fressian-test/Bar
                                            (fn [bar] (assoc bar :c "donkey"))})
                      w (fress/create-writer baos
                                             :handlers
                                             (-> (merge fress/clojure-write-handlers
                                                        (incognito-write-handlers write-handlers))
                                                 fress/associative-lookup
-                                                fress/inheritance-lookup))] ;
+                                                fress/inheritance-lookup))]
                  (fress/write-object w bar)
                  (let [bais (ByteArrayInputStream. (.toByteArray baos))]
                    (fress/read bais
@@ -37,7 +36,7 @@
     (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
       (is (= bar
              (with-open [baos (ByteArrayOutputStream.)]
-               (let [read-handlers (atom {'incognito.fressian_test.Bar map->Bar})
+               (let [read-handlers (atom {'incognito.fressian-test/Bar map->Bar})
                      w (fress/create-writer baos
                                             :handlers
                                             (-> (merge fress/clojure-write-handlers

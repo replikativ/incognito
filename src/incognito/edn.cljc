@@ -3,18 +3,24 @@
                :cljs [cljs.reader :refer [read-string]])
             [incognito.base :refer :all]))
 
+#?(:clj
+   (defmethod print-method incognito.base.IncognitoTaggedLiteral [v ^java.io.Writer w]
+     (.write w (str "#incognito.base/IncognitoTaggedLiteral" (into {} v)))))
+
 (defn read-string-safe [read-handlers s]
   (when s
     #?(:clj
        (edn/read-string {:readers (assoc read-handlers
-                                         'incognito.base.IncognitoTaggedLiteral
+                                         'incognito.base/IncognitoTaggedLiteral
                                          (partial incognito-reader read-handlers))
                          :default (fn [tag literal]
                                     (map->IncognitoTaggedLiteral {:tag tag
                                                                   :value literal}))}
                         s)
        :cljs
-       (binding [cljs.reader/*tag-table* (atom (merge read-handlers
+       (binding [cljs.reader/*tag-table* (atom (merge (assoc read-handlers
+                                                             'incognito.base/IncognitoTaggedLiteral
+                                                             (partial incognito-reader read-handlers))
                                                       ;; HACKY reconstruct vanilla tag-table
                                                       (select-keys @cljs.reader/*tag-table*
                                                                    #{"inst" "uuid" "queue"})))

@@ -25,12 +25,14 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 ```clojure
 (defrecord Bar [a b])
 
-(def write-handlers {user.Bar (fn [bar] (assoc bar :c "banana"))})
-(def read-handlers {'user.Bar (fn [bar] map->Bar)})
+(def write-handlers {'user/Bar (fn [bar] (assoc bar :c "banana"))})
+(def read-handlers {'user/Bar (fn [bar] map->Bar)})
 ```
-
-*NOTE*: The syntax quote for the read-handlers which ensures that you
+*NOTE*: The syntax quote for the handlers which ensures that you
 can deserialize unknown classes.
+
+A write-handler has to return an associative datastructure which is
+internally stored as an untyped map together with the tag information.
 
 Extracted from the tests:
 
@@ -38,6 +40,10 @@ Extracted from the tests:
 
 ```clojure
 (require '[incognito.edn :refer [read-string-safe]])
+
+;; for edn you need to explicitly serialize jvm class types consistently with cljs
+(defmethod print-method user.Bar [v ^java.io.Writer w]
+  (.write w (str "#user/Bar" (into {} v))))
 
 (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
   (= bar (->> bar
