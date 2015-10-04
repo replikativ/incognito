@@ -62,10 +62,17 @@
       (doseq [e pvec]
         (.writeObject writer e)))))
 
+(def set-reader
+  (reify ReadHandler
+    (read [_ reader tag component-count]
+      (let [^List l (.readObject reader)]
+        (into #{} l)))))
+
 (defn incognito-read-handlers [read-handlers]
   {"irecord" (record-reader read-handlers)
    "plist" plist-reader
-   "pvec" pvec-reader})
+   "pvec" pvec-reader
+   "set" set-reader})
 
 (defn incognito-write-handlers [write-handlers]
   {clojure.lang.PersistentList {"plist" plist-writer}
