@@ -29,7 +29,7 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 (def read-handlers {'user.Bar (fn [bar] map->Bar)})
 ```
 
-/NOTE/: The syntax quote for the read-handlers which ensures that you
+*NOTE*: The syntax quote for the read-handlers which ensures that you
 can deserialize unknown classes.
 
 Extracted from the tests:
