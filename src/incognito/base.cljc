@@ -3,8 +3,10 @@
 (defrecord IncognitoTaggedLiteral [tag value])
 
 (defn cljs-type [r]
-  (let [[_ pre t] (re-find #"(.+)[\.\/]([^.]+)" (pr-str (type r)))]
-    (symbol (.replace pre "_" "-") t)))
+  (-> (type r)
+      pr-str
+      (.replace "_" "-")
+      symbol))
 
 (defn incognito-reader [read-handlers m]
   (if (read-handlers (:tag m))
@@ -24,7 +26,7 @@
 
   (cljs-type (map->Foos {:a 4}))
 
-  (incognito-writer {'incognito.base/Foos (fn [r] (assoc r :c "bananas"))}
+  (incognito-writer {'incognito.base.Foos (fn [r] (assoc r :c "bananas"))}
                     (map->Foos {:a [1 2 3] :b {:c "Fooos"}}))
 
   ({'incognito.base/Foos (fn [r] (assoc r :c "bananas"))} (cljs-type (map->Foos {:a [1 2 3] :b {:c "Fooos"}}))))

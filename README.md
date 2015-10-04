@@ -41,10 +41,6 @@ Extracted from the tests:
 ```clojure
 (require '[incognito.edn :refer [read-string-safe]])
 
-;; for edn you need to explicitly serialize jvm class types consistently with cljs
-(defmethod print-method user.Bar [v ^java.io.Writer w]
-  (.write w (str "#user/Bar" (into {} v))))
-
 (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
   (= bar (->> bar
               pr-str
@@ -53,6 +49,13 @@ Extracted from the tests:
               (read-string-safe read-handlers))))
 ```
 
+For dashed namespace names you need a custom printer to be
+ClojureScript conform.
+
+```clojure
+(defmethod print-method some_namespace.Bar [v ^java.io.Writer w]
+  (.write w (str "#some-namespace.Bar" (into {} v))))
+```
 
 
 ### transit

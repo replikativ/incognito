@@ -10,12 +10,12 @@
 (deftest incognito-roundtrip-test
   (testing "Test incognito transport."
     (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
-      (is (= #incognito.base.IncognitoTaggedLiteral{:tag incognito.fressian-test/Bar,
+      (is (= #incognito.base.IncognitoTaggedLiteral{:tag incognito.fressian-test.Bar,
                                                     :value {:a [1 2 3],
                                                             :b {:c "Fooos"}
                                                             :c "donkey"}}
              (with-open [baos (ByteArrayOutputStream.)]
-               (let [write-handlers (atom {'incognito.fressian-test/Bar
+               (let [write-handlers (atom {'incognito.fressian-test.Bar
                                            (fn [bar] (assoc bar :c "donkey"))})
                      w (fress/create-writer baos
                                             :handlers
@@ -36,7 +36,7 @@
     (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
       (is (= bar
              (with-open [baos (ByteArrayOutputStream.)]
-               (let [read-handlers (atom {'incognito.fressian-test/Bar map->Bar})
+               (let [read-handlers (atom {'incognito.fressian-test.Bar map->Bar})
                      w (fress/create-writer baos
                                             :handlers
                                             (-> (merge fress/clojure-write-handlers

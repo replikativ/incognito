@@ -1,7 +1,7 @@
 (ns incognito.fressian
   (:require [clojure.edn :as edn]
             [clojure.data.fressian :as fress]
-            [incognito.base :refer :all])
+            [incognito.base :refer [incognito-reader incognito-writer]])
   (:import [org.fressian.handlers WriteHandler ReadHandler]))
 
 
@@ -84,7 +84,7 @@
 
   (with-open [baos (ByteArrayOutputStream.)]
     (let [read-handlers (atom {'incognito.fressian.Foo map->Foo})
-          write-handlers (atom {incognito.fressian.Foo (fn [foo] (println "foos") (assoc foo :c "donkey"))})
+          write-handlers (atom {'incognito.fressian.Foo (fn [foo] (println "foos") (assoc foo :c "donkey"))})
           w (fress/create-writer baos :handlers (-> (merge fress/clojure-write-handlers
                                                            (incognito-write-handlers write-handlers))
                                                     fress/associative-lookup
@@ -93,7 +93,7 @@
       (let [bais (ByteArrayInputStream. (.toByteArray baos))]
         (fress/read bais
                     :handlers (-> (merge fress/clojure-read-handlers
-                                         (incognito-read-handlers (atom {}) #_read-handlers))
+                                         (incognito-read-handlers #_(atom {}) read-handlers))
                                   fress/associative-lookup)))))
 
   )

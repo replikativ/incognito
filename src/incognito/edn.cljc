@@ -1,31 +1,29 @@
 (ns incognito.edn
   (:require #?(:clj [clojure.edn :as edn]
                :cljs [cljs.reader :refer [read-string]])
-            [incognito.base :refer :all]))
+            [incognito.base :refer [incognito-reader map->IncognitoTaggedLiteral]]))
 
-#?(:clj
-   (defmethod print-method incognito.base.IncognitoTaggedLiteral [v ^java.io.Writer w]
-     (.write w (str "#incognito.base/IncognitoTaggedLiteral" (into {} v)))))
-
-(defn read-string-safe [read-handlers s]
+(defn read-string-safe
+  "Read-handlers is not an atom here."
+  [read-handlers s]
   (when s
     #?(:clj
        (edn/read-string {:readers (assoc read-handlers
-                                         'incognito.base/IncognitoTaggedLiteral
+                                         'incognito.base.IncognitoTaggedLiteral
                                          (partial incognito-reader read-handlers))
-                         :default (fn [tag literal]
+                         :default (fn [tag value]
                                     (map->IncognitoTaggedLiteral {:tag tag
-                                                                  :value literal}))}
+                                                                  :value value}))}
                         s)
        :cljs
-       (binding [cljs.reader/*tag-table* (atom (merge (assoc read-handlers
-                                                             'incognito.base/IncognitoTaggedLiteral
-                                                             (partial incognito-reader read-handlers))
+       (binding [cljs.reader/*tag-table* (atom (merge {"incognito.base.IncognitoTaggedLiteral"
+                                                       (partial incognito-reader read-handlers)}
                                                       ;; HACKY reconstruct vanilla tag-table
                                                       (select-keys @cljs.reader/*tag-table*
                                                                    #{"inst" "uuid" "queue"})))
                  cljs.reader/*default-data-reader-fn*
-                 (atom (fn [tag val] (partial incognito-reader read-handlers)))]
+                 (atom (fn [tag value]
+                         (incognito-reader read-handlers {:tag tag :value value})))]
          (read-string s)))))
 
 

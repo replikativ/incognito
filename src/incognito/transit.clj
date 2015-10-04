@@ -1,7 +1,7 @@
 (ns incognito.transit
   (:require [clojure.edn :as edn]
             [cognitect.transit :as transit]
-            [incognito.base :refer :all])
+            [incognito.base :refer [incognito-reader incognito-writer]])
   (:import [com.cognitect.transit.impl WriteHandlers$MapWriteHandler]))
 
 (defn incognito-write-handler [write-handlers]
