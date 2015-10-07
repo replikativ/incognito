@@ -26,7 +26,7 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 (defrecord Bar [a b])
 
 (def write-handlers {'user.Bar (fn [bar] (assoc bar :c "banana"))})
-(def read-handlers {'user.Bar (fn [bar] map->Bar)})
+(def read-handlers {'user.Bar map->Bar})
 ```
 *NOTE*: The syntax quote for the handlers which ensures that you
 can deserialize unknown classes.
@@ -91,7 +91,7 @@ ClojureScript conform.
        (let [w (fress/create-writer baos
                                     :handlers
                                     (-> (merge fress/clojure-write-handlers
-                                               (incognito-write-handlers write-handlers))
+                                               (incognito-write-handlers (atom write-handlers)))
                                         fress/associative-lookup
                                         fress/inheritance-lookup))] ;
          (fress/write-object w bar)
@@ -99,7 +99,7 @@ ClojureScript conform.
            (fress/read bais
                        :handlers
                        (-> (merge fress/clojure-read-handlers
-                                  (incognito-read-handlers read-handlers))
+                                  (incognito-read-handlers (atom read-handlers)))
                            fress/associative-lookup)))))))
 ```
 
