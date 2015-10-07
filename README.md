@@ -25,8 +25,8 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 ```clojure
 (defrecord Bar [a b])
 
-(def write-handlers {'user.Bar (fn [bar] (assoc bar :c "banana"))})
-(def read-handlers {'user.Bar map->Bar})
+(def write-handlers (atom {'user.Bar (fn [bar] (assoc bar :c "banana"))}))
+(def read-handlers (atom {'user.Bar map->Bar}))
 ```
 *NOTE*: The syntax quote for the handlers which ensures that you
 can deserialize unknown classes.
@@ -69,12 +69,12 @@ ClojureScript conform.
        (let [writer (transit/writer baos :json
                                     {:handlers {java.util.Map
                                                 (incognito-write-handler
-                                                 (atom write-handlers))}})]
+                                                 write-handlers)}})]
          (transit/write writer bar)
          (let [bais (ByteArrayInputStream. (.toByteArray baos))
                reader (transit/reader bais :json
                                       {:handlers {"incognito"
-                                                  (incognito-read-handler (atom read-handlers))}})]
+                                                  (incognito-read-handler read-handlers)}})]
            (transit/read reader))))))
 ```
 
@@ -91,7 +91,7 @@ ClojureScript conform.
        (let [w (fress/create-writer baos
                                     :handlers
                                     (-> (merge fress/clojure-write-handlers
-                                               (incognito-write-handlers (atom write-handlers)))
+                                               (incognito-write-handlers write-handlers))
                                         fress/associative-lookup
                                         fress/inheritance-lookup))] ;
          (fress/write-object w bar)
@@ -99,7 +99,7 @@ ClojureScript conform.
            (fress/read bais
                        :handlers
                        (-> (merge fress/clojure-read-handlers
-                                  (incognito-read-handlers (atom read-handlers)))
+                                  (incognito-read-handlers read-handlers))
                            fress/associative-lookup)))))))
 ```
 
