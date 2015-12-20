@@ -96,11 +96,11 @@
                                                            (incognito-write-handlers write-handlers))
                                                     fress/associative-lookup
                                                     fress/inheritance-lookup))] ;
-      (fress/write-object w (map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
+      (fress/write-object w #{1 2 3} #_(map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
       (let [bais (ByteArrayInputStream. (.toByteArray baos))]
-        (fress/read bais
-                    :handlers (-> (merge fress/clojure-read-handlers
-                                         (incognito-read-handlers #_(atom {}) read-handlers))
-                                  fress/associative-lookup)))))
+        (type (fress/read bais
+                          :handlers (-> (merge fress/clojure-read-handlers
+                                               (incognito-read-handlers #_(atom {}) read-handlers))
+                                        fress/associative-lookup))))))
 
   )
