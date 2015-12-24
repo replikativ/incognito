@@ -10,6 +10,12 @@ and therefore allows to unwrap them later. It also unifies record
 serialization between `fressian` and `transit` as long as you can
 express your serialization format in Clojure's default datastructures.
 
+The general idea is that most custom Clojure datatypes (either records
+or deftypes) can be expressed in Clojure datastructures if you do not
+need a custom format, e.g. for efficiency or performance. In these
+cases you don't need to implement handlers for every serialization
+format, but can use incognito.
+
 ## Usage
 
 Add this to your project dependencies:
@@ -102,9 +108,6 @@ ClojureScript conform.
                                   (incognito-read-handlers read-handlers))
                            fress/associative-lookup)))))))
 ```
-
-## TODO
-- cross-platform transit code
 
 ## License
 
