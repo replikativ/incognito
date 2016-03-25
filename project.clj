@@ -1,4 +1,4 @@
-(defproject io.replikativ/incognito "0.2.0-beta1"
+(defproject io.replikativ/incognito "0.2.0"
   :description "Safe transport of unknown record types in distributed systems."
   :url "https://github.com/replikativ/incognito"
   :license {:name "Eclipse Public License"

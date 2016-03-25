@@ -12,9 +12,20 @@ express your serialization format in Clojure's default datastructures.
 
 The general idea is that most custom Clojure datatypes (either records
 or deftypes) can be expressed in Clojure datastructures if you do not
-need a custom format, e.g. for efficiency or performance. In these
-cases you don't need to implement handlers for every serialization
-format, but can use incognito.
+need a custom binary format, e.g. for efficiency or performance. With
+incognito you don't need custom handlers for every serialization
+format (but you can still do so, ofc.).
+
+Incognito defaults to a pr-str->read-string roundtrip which is a
+reasonable, but inefficient, default for most Clojure types. We use it
+for instance to carry the custom type of a [datascript
+db](https://github.com/tonsky/datascript) in
+[topiq](https://github.com/replikativ/topiq). You don't need to
+provide a write handler for incognito except for efficiency reasons or
+if your type is not pr-strable (in which case you should make it then
+first).
+
+
 
 ## Usage
 
@@ -23,7 +34,7 @@ Add this to your project dependencies:
 
 Exclude all serialization libraries you don't need, e.g. for edn support only:
 ```clojure
-[io.replikativ/incognito "0.1.0" :exclusions [org.clojure/data.fressian com.cognitect/transit-clj]]
+[io.replikativ/incognito "0.2.0" :exclusions [org.clojure/data.fressian com.cognitect/transit-clj]]
 ```
 
 In general you can control serialization by `write-handlers` and `read-handlers`:
@@ -31,10 +42,10 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 ```clojure
 (defrecord Bar [a b])
 
-(def write-handlers (atom {'user.Bar (fn [bar] (assoc bar :c "banana"))}))
+(def write-handlers (atom {user.Bar (fn [bar] ['user.Bar (assoc bar :c "banana")])}))
 (def read-handlers (atom {'user.Bar map->Bar}))
 ```
-*NOTE*: The syntax quote for the handlers which ensures that you
+*NOTE*: The syntax quote for the read handler which is necessary so you
 can deserialize unknown classes.
 
 A write-handler has to return an associative datastructure which is
@@ -111,7 +122,7 @@ ClojureScript conform.
 
 ## License
 
-Copyright © 2015 Christian Weilbach
+Copyright © 2015-2016 Christian Weilbach
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
