@@ -14,7 +14,7 @@ The general idea is that most custom Clojure datatypes (either records
 or deftypes) can be expressed in Clojure datastructures if you do not
 need a custom binary format, e.g. for efficiency or performance. With
 incognito you don't need custom handlers for every serialization
-format (but you can still do so, ofc.).
+format. But you can still do so ofc., once you hit efficiency problems.
 
 Incognito defaults to a pr-str->read-string roundtrip which is a
 reasonable, but inefficient, default for most Clojure types. We use it
