@@ -10,31 +10,33 @@ and therefore allows to unwrap them later. It also unifies record
 serialization between `fressian` and `transit` as long as you can
 express your serialization format in Clojure's default datastructures.
 
-The general idea is that most custom Clojure datatypes (either records
-or deftypes) can be expressed in Clojure datastructures if you do not
-need a custom binary format, e.g. for efficiency or performance. With
-incognito you don't need custom handlers for every serialization
-format. But you can still do so ofc., once you hit efficiency problems.
+The general idea is that most custom Clojure datatypes (either records or
+deftypes) can be expressed in Clojure datastructures if you do not need a custom
+binary format, e.g. for efficiency or performance. With incognito you don't need
+custom handlers for every serialization format. But you can still do so ofc.,
+once you hit efficiency problems. Incognito is at the moment not supposed to
+provide serialization directly to storage, so you have to be able to serialize
+your custom types in memory.
 
-Incognito defaults to a pr-str->read-string roundtrip which is a
-reasonable, but inefficient, default for most Clojure types. We use it
-for instance to carry the custom type of a [datascript
-db](https://github.com/tonsky/datascript) in
-[topiq](https://github.com/replikativ/topiq). You don't need to
-provide a write handler for incognito except for efficiency reasons or
-if your type is not pr-strable (in which case you should make it then
-first).
+Incognito falls back to a pr-str->read-string roundtrip which is a reasonable,
+but inefficient and will only work if the type has proper Clojure print+read
+support. 
 
-
+We use it for instance to carry the custom type of
+a [datascript db](https://github.com/tonsky/datascript)
+in [topiq](https://github.com/replikativ/topiq). You don't need to provide a
+write handler for incognito except for efficiency reasons or if your type is not
+pr-strable (in which case you should make it then first).
 
 ## Usage
 
 Add this to your project dependencies:
 [![Clojars Project](http://clojars.org/io.replikativ/incognito/latest-version.svg)](http://clojars.org/io.replikativ/incognito)
 
-Exclude all serialization libraries you don't need, e.g. for edn support only:
+Include all serialization libraries you don't need, e.g. for edn support only:
 ```clojure
-[io.replikativ/incognito "0.2.0" :exclusions [org.clojure/data.fressian com.cognitect/transit-clj]]
+[org.clojure/data.fressian com.cognitect/transit-clj "0.8.297"]
+[io.replikativ/incognito "0.2.1"]
 ```
 
 In general you can control serialization by `write-handlers` and `read-handlers`:
@@ -119,6 +121,10 @@ ClojureScript conform.
                                   (incognito-read-handlers read-handlers))
                            fress/associative-lookup)))))))
 ```
+
+## TODO
+
+- move serialization dependencies into dev profile
 
 ## License
 

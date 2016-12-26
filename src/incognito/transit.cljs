@@ -6,6 +6,8 @@
 (deftype IncognitoTaggedLiteralHandler [write-handlers map-handler]
   Object
   (tag [_ v]
+    ;; TODO this explicit type dispatch is bad, use an appropriate interface
+    ;; instead
     ;; if it is not a standard map, we treat it as a record
     (if-not (or (isa? (type v) cljs.core/PersistentArrayMap)
                 (isa? (type v) cljs.core/PersistentHashMap)

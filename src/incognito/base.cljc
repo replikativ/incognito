@@ -20,9 +20,9 @@
     (map->IncognitoTaggedLiteral m)))
 
 (defn incognito-writer [write-handlers r]
-  (let [t (type r)
-        [tag v] (if (write-handlers t)
-                  ((write-handlers t) r)
+  (let [s (-> r type pr-str symbol)
+        [tag v] (if (write-handlers s)
+                  [s ((write-handlers s) (into {} r))]
                   (pr-str->pure-read-string r))]
     {:tag tag
      :value v}))
