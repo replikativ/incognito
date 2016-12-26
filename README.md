@@ -1,4 +1,4 @@
-# incognito
+# incognito [![CircleCI](https://circleci.com/gh/replikativ/incognito.svg?style=svg)](https://circleci.com/gh/replikativ/incognito)
 
 Different Clojure(Script) serialization protocols like `edn`, `fressian` or
 `transit` offer different ways to serialize custom types. In general
