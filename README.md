@@ -47,8 +47,8 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 (def write-handlers (atom {user.Bar (fn [bar] ['user.Bar (assoc bar :c "banana")])}))
 (def read-handlers (atom {'user.Bar map->Bar}))
 ```
-*NOTE*: The syntax quote for the read handler which is necessary so you
-can deserialize unknown classes.
+*NOTE*: The syntax quote for the read handler is necessary so you can 
+deserialize unknown classes.
 
 A write-handler has to return an associative datastructure which is
 internally stored as an untyped map together with the tag information.

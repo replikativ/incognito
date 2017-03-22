@@ -6,7 +6,7 @@
 
 (defrecord IncognitoTaggedLiteral [tag value])
 
-(defn pr-str->pure-read-string [r]
+#_(defn pr-str->pure-read-string [r]
   (let [r-str (pr-str r)]
     #?(:cljs (binding [*tag-table* (atom (select-keys @cljs.reader/*tag-table*
                                                       ["inst" "uuid" "queue" "js"]))
@@ -23,16 +23,26 @@
   (let [s (-> r type pr-str symbol)
         [tag v] (if (write-handlers s)
                   [s ((write-handlers s) (into {} r))]
-                  (pr-str->pure-read-string r))]
+                  [s (into {} r)] 
+                  #_(pr-str->pure-read-string r))]
     {:tag tag
      :value v}))
 
+
+
 (comment
+  (require '[clj-time.core :as t])
+
+  (t/now)
+
   (defrecord Foos [a])
+
+  (into {} (map->Foos {:a 4}))
 
   (cljs-type (map->Foos {:a 4}))
 
-  (incognito-writer {incognito.base.Foos (fn [r] ['incognito.base.Foos (assoc r :c "bananas")])}
+  (incognito-writer {incognito.base.Foos (fn [r] ['incognito.base.Foos
+                                                  (assoc r :c "bananas")])}
                     (map->Foos {:a [1 2 3] :b {:c "Fooos"}}))
 
   (incognito-writer {} (map->Foos {:a [1 2 3] :b {:c "Fooos"}}))
