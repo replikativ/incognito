@@ -29,9 +29,9 @@
                                                           (incognito-read-handler (atom {}))}})]
                    (transit/read reader)))))))))
 
-(defrecord DateTime [ts])
+#_(defrecord DateTime [ts])
 
-(deftest incognito-roundtrip-date-time-test
+#_(deftest incognito-roundtrip-date-time-test
   (testing "Test incognito date-time transport."
     (let [now (t/now)]
       (is (= #incognito.base.IncognitoTaggedLiteral{:tag 'org.joda.time.DateTime,
