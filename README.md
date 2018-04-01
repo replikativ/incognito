@@ -36,7 +36,7 @@ Add this to your project dependencies:
 Include all serialization libraries you need, e.g. for edn support only:
 ```clojure
 [org.clojure/data.fressian com.cognitect/transit-clj "0.8.297"]
-[io.replikativ/incognito "0.2.1"]
+[io.replikativ/incognito "0.2.2"]
 ```
 
 In general you can control serialization by `write-handlers` and `read-handlers`:
@@ -44,8 +44,30 @@ In general you can control serialization by `write-handlers` and `read-handlers`
 ```clojure
 (defrecord Bar [a b])
 
-(def write-handlers (atom {user.Bar (fn [bar] ['user.Bar (assoc bar :c "banana")])}))
+(def write-handlers (atom {'user.Bar (fn [bar] bar)}))
 (def read-handlers (atom {'user.Bar map->Bar}))
+```
+
+To handle custom non-record types you have to transform it into a readable
+data-structure. You can test the roundtrip directly with incognito-reader and
+writer:
+
+```clojure
+(require '[clj-time.core :as t])
+(require '[clj-time.format :as tf])
+
+(incognito-writer 
+  ;; read-handlers
+  {'org.joda.time.DateTime (fn [r] (str r))}
+
+  (t/now))
+
+(incognito-reader 
+  ;; write-handlers
+  {'org.joda.time.DateTime (fn [r] (t/date-time r))}
+
+  {:tag 'org.joda.time.DateTime, :value "2017-04-17T13:11:29.977Z"})
+
 ```
 *NOTE*: The syntax quote for the read handler is necessary so you can 
 deserialize unknown classes.
@@ -53,7 +75,13 @@ deserialize unknown classes.
 A write-handler has to return an associative datastructure which is
 internally stored as an untyped map together with the tag information.
 
-Extracted from the tests:
+
+## Plugging incognito into your serializer
+
+You need to wrap the base map handler in the different serializers so incognito
+can wrap the serialization for its own handlers. 
+
+(Extracted from the tests):
 
 ### edn
 
@@ -66,14 +94,6 @@ Extracted from the tests:
               (read-string-safe {})
               pr-str
               (read-string-safe read-handlers))))
-```
-
-For dashed namespace names you need a custom printer to be
-ClojureScript conform.
-
-```clojure
-(defmethod print-method some_namespace.Bar [v ^java.io.Writer w]
-  (.write w (str "#some-namespace.Bar" (into {} v))))
 ```
 
 
@@ -121,6 +141,18 @@ ClojureScript conform.
                                   (incognito-read-handlers read-handlers))
                            fress/associative-lookup)))))))
 ```
+
+## ClojureScript
+
+For dashed namespace names you need a custom printer to be
+ClojureScript conform.
+
+```clojure
+(defmethod print-method some_namespace.Bar [v ^java.io.Writer w]
+  (.write w (str "#some-namespace.Bar" (into {} v))))
+```
+
+
 
 ## TODO
 
