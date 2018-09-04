@@ -12,10 +12,10 @@
   [write-handlers]
   (fn [w rec]
     (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
-                          (into {} rec)
-                          (incognito-writer @write-handlers rec))]
+                                (into {} rec)
+                                (incognito-writer @write-handlers rec))]
       (write-tag w "record" 2)
-      (write-object w (str tag))
+      (write-object w tag)
       (write-tag w "map" 1)
       (beginClosedList w)
       (doseq [[field value] r]
@@ -30,7 +30,7 @@
     (let [tag   (read-object rdr)
           value (read-object rdr)]
       (incognito-reader @read-handlers
-                        {:tag tag :value val}))))
+                        {:tag tag :value (:value value)}))))
 
 (defn- plist-reader [reader _ _]
   (let [len (readInt reader)]
@@ -70,26 +70,18 @@
 (defn incognito-write-handlers [write-handlers]
   {cljs.core/List             plist-writer
    cljs.core/EmptyList        plist-writer
-   "record"                   (record-writer write-handlers) ;; conversion to pk lib ;:record->name {SomeRecord "SomeRec"
+   "record"                   (record-writer write-handlers)
    cljs.core/LazySeq          plist-writer
    cljs.core/PersistentVector pvec-writer})
 
 (comment
 
   (do
-    (prn "---->>> Start Test <<<<------")
-    (defrecord SomeRecord [f1 f2]) ; map->SomeRecord is now implicitly def3ned
-    (def rec (SomeRecord. "field1" "field2"))
-    (def buf (fress.api/byte-stream))
-    (def writer (fress.api/create-writer buf :handlers
-                                         (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))})) ))
+   (defrecord SomeRecord [f1 f2])
+   (def rec (SomeRecord.  [1 2 2] {:c "213"}))
+   (def buf (fress.api/byte-stream))
+   (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
+   (fress.api/write-object writer rec)
+   (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
 
-    (prn "write object------------")
-    (w/writeObject writer rec)
-    (prn "read object------------")
-    (prn (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
-    (prn "---->>> End Test <<<<------"))
-
-
-
-)
+  )
