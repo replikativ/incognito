@@ -4,17 +4,6 @@
 
 (enable-console-print!)
 
-(defmethod cljs.test/report [:cljs.test/default :end-run-tests] [m]
-  (if (cljs.test/successful? m)
-    (println "Success!")
-    (println "FAIL")))
-
-(use-fixtures :once
-  {:before
-   #(do (prn "START TEST"))
-   :after
-   #(do (prn "DONE"))})
-
 (defrecord Bar [a b])
 
 (deftest incognito-roundtrip-test
