@@ -1,4 +1,4 @@
-(defproject io.replikativ/incognito "0.2.4 - Snapshot"
+(defproject io.replikativ/incognito "0.2.5-SNAPSHOT"
   :description "Safe transport of unknown record types in distributed systems."
   :url "https://github.com/replikativ/incognito"
   :license {:name "Eclipse Public License"
@@ -24,11 +24,6 @@
   :source-paths ["src"]
   :test-paths ["test"]
 
-  :aliases
-  {"cljs-test" ["cljsbuild" "test" "unit-tests"]
-   "test-all" ["do" "clean," "test," "cljsbuild" "once"]
-   "cljs-auto-test" ["cljsbuild" "auto" "tests"]}
-
   :cljsbuild
   {:test-commands {"unit-tests" ["node" "target/unit-tests.js"]}
    :builds
@@ -38,8 +33,4 @@
      :compiler {:output-to "target/unit-tests.js"
                 :optimizations :none
                 :target :nodejs
-                :main incognito.fressian-test}}
-    :production
-    {:source-paths ["src"]
-     :compiler {:output-to "target/production.js"
-                :optimizations :advanced}}}})
+                :main incognito.fressian-test}}}})
