@@ -14,6 +14,7 @@
     (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
                                 (into {} rec)
                                 (incognito-writer @write-handlers rec))]
+      (prn "writer tag: " tag "rec: " rec)
       (write-tag w "record" 2)
       (write-object w tag)
       (write-tag w "map" 1)
@@ -61,6 +62,15 @@
   (let [^List l (read-object reader)]
         (into #{} l)))
 
+(defn- write-tree-map [w m]
+  (write-tag w "map" 1)
+  (beginClosedList w)
+  (doseq [[field value] m]
+    (write-object w field true)
+    (write-object w value))
+  (endList w))
+
+
 (defn incognito-read-handlers [read-handlers]
   {"record" (record-reader read-handlers)
    "plist"   plist-reader
@@ -70,6 +80,7 @@
 (defn incognito-write-handlers [write-handlers]
   {cljs.core/List             plist-writer
    cljs.core/EmptyList        plist-writer
+   cljs.core/PersistentTreeMap write-tree-map
    "record"                   (record-writer write-handlers)
    cljs.core/LazySeq          plist-writer
    cljs.core/PersistentVector pvec-writer})
@@ -83,5 +94,5 @@
    (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
    (fress.api/write-object writer rec)
    (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
-
+(fress.api/create-reader)
   )
