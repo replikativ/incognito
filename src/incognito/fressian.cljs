@@ -14,7 +14,6 @@
     (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
                                 (into {} rec)
                                 (incognito-writer @write-handlers rec))]
-      (prn "writer tag: " tag "rec: " rec)
       (write-tag w "record" 2)
       (write-object w tag)
       (write-tag w "map" 1)
@@ -69,7 +68,6 @@
     (write-object w field true)
     (write-object w value))
   (endList w))
-
 
 (defn incognito-read-handlers [read-handlers]
   {"record" (record-reader read-handlers)
