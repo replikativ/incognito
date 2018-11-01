@@ -25,7 +25,7 @@
   (testing "Test two roundtrips, one incognito and deserialize at end."
     (let [bar            (map->Bar {:a [1 2 3] :b {:c "Fooos"}})
           write-handlers (atom {})
-          read-handlers  (atom {'incognito.fressian-test/Bar map->Bar})]
+          read-handlers  (atom {'incognito.fressian-test.Bar map->Bar})]
       (is (= bar
              (let [buffer (fress.api/byte-stream)
                    w      (fress.api/create-writer buffer
