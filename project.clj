@@ -8,7 +8,7 @@
                  [org.clojure/data.fressian "0.2.1" :scope "provided"]
                  [com.cognitect/transit-clj "0.8.285" :scope "provided"]
                  [com.cognitect/transit-cljs "0.8.239" :scope "provided"]
-                 [fress "0.2.0"]]
+                 [fress "0.3.1"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]]
 
