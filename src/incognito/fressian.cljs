@@ -4,6 +4,8 @@
             [fress.reader :as r :refer [IFressianReader readInt]]
             [fress.writer :as w :refer [IFressianWriter writeInt beginClosedList endList class-sym]]
             [fress.impl.codes :as codes]
+            [cljs.reader :refer [read-string
+                                 *tag-table* *default-data-reader-fn*]]
             [fress.impl.buffer :as buf]
             [fress.impl.raw-input :as rawIn]))
 
@@ -11,9 +13,13 @@
 (defn- record-writer
   [write-handlers]
   (fn [w rec]
-    (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
-                                (into {} rec)
-                                (incognito-writer @write-handlers rec))]
+    (let [{:keys [tag value] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
+                                      (into {} rec)
+                                      (incognito-writer @write-handlers rec))
+          tag                       (-> tag
+                                        str
+                                        (clojure.string/replace-first  #"/" ".")
+                                        symbol)]
       (write-tag w "record" 2)
       (write-object w tag)
       (write-tag w "map" 1)
@@ -22,6 +28,7 @@
         (write-object w field true)
         (write-object w value))
       (endList w))))
+
 
 ;;add incognito read-handler
 (defn- record-reader
@@ -92,5 +99,5 @@
    (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
    (fress.api/write-object writer rec)
    (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
-(fress.api/create-reader)
-  )
+
+)
