@@ -18,7 +18,7 @@
                 (fress.api/write-object w bar)
                 (fress.api/read buffer :handlers (incognito-read-handlers (atom {}))))]
       (is (= {:c "donkey", :b {:c "Fooos"}, :a [1 2 3]} (:value r)))
-      (is (= 'incognito.fressian-test/Bar (:tag r)))
+      (is (= 'incognito.fressian-test.Bar (:tag r)))
       (is (= incognito.base/IncognitoTaggedLiteral (type r))))))
 
 (deftest double-roundtrip-test
