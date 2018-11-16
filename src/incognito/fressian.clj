@@ -2,32 +2,31 @@
   (:require [clojure.edn :as edn]
             [clojure.data.fressian :as fress]
             [incognito.base :refer [incognito-reader incognito-writer]])
-  (:import [org.fressian.handlers WriteHandler ReadHandler]))
-
+  (:import [org.fressian StreamingWriter]
+           [org.fressian.handlers WriteHandler ReadHandler]))
 
 (defn record-reader [read-handlers]
   (reify ReadHandler
-    (read [_ reader _ component-count]
-      (let [len (.readInt reader)
-            tag (.readObject reader)
-            val (->> (range len)
-                     (map (fn [_] (.readObject reader)))
-                     (map vec)
-                     (into {}))]
+    (read [_ reader tag component-count]
+      (let [tag (.readObject reader)
+            val (.readObject reader)]
         (incognito-reader @read-handlers
-                          {:tag tag :value val})))))
+                          {:tag tag :value (:value val)})))))
 
 (defn record-writer [write-handlers]
   (reify WriteHandler
-    (write [_ writer record]
-      (let [{:keys [tag value]} (if (isa? (type record) incognito.base.IncognitoTaggedLiteral)
-                                  (into {} record) ;; carry on as map
-                                  (incognito-writer @write-handlers record))]
-        (.writeTag writer "irecord" 2)
-        (.writeInt writer (count value))
-        (.writeObject writer tag)
-        (doseq [e value]
-          (.writeObject writer e))))))
+    (write [_ w rec]
+      (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
+                                  (into {} rec) ;; carry on as map
+                                  (incognito-writer @write-handlers rec))]
+        (.writeTag w "record" 2)
+        (.writeObject w tag)
+        (.writeTag w "map" 1)
+        (.beginClosedList ^StreamingWriter w)
+        (doseq [[field value] r]
+          (.writeObject w field true)
+          (.writeObject w value))
+        (.endList ^StreamingWriter w)))))
 
 (def plist-reader
   (reify ReadHandler
@@ -69,17 +68,17 @@
         (into #{} l)))))
 
 (defn incognito-read-handlers [read-handlers]
-  {"irecord" (record-reader read-handlers)
-   "plist" plist-reader
-   "pvec" pvec-reader
-   "set" set-reader})
+  {"record" (record-reader read-handlers)
+   "plist"  plist-reader
+   "pvec"   pvec-reader
+   "set"    set-reader})
 
 (defn incognito-write-handlers [write-handlers]
-  {clojure.lang.PersistentList {"plist" plist-writer}
+  {clojure.lang.PersistentList           {"plist" plist-writer}
    clojure.lang.PersistentList$EmptyList {"plist" plist-writer}
-   clojure.lang.IRecord {"irecord" (record-writer write-handlers)}
-   clojure.lang.LazySeq {"plist" plist-writer}
-   clojure.lang.PersistentVector {"pvec" pvec-writer}})
+   clojure.lang.IRecord                  {"record" (record-writer write-handlers)}
+   clojure.lang.LazySeq                  {"plist" plist-writer}
+   clojure.lang.PersistentVector         {"pvec" pvec-writer}})
 
 
 (comment
@@ -91,16 +90,28 @@
 
   (with-open [baos (ByteArrayOutputStream.)]
     (let [read-handlers (atom {'incognito.fressian.Foo map->Foo})
-          write-handlers (atom {'incognito.fressian.Foo (fn [foo] (println "foos") (assoc foo :c "donkey"))})
+          write-handlers (atom {'incognito.fressian.Foo (fn [foo]
+                                                          (println "foos")
+                                                          (assoc foo :c "donkey"))})
           w (fress/create-writer baos :handlers (-> (merge fress/clojure-write-handlers
                                                            (incognito-write-handlers write-handlers))
                                                     fress/associative-lookup
                                                     fress/inheritance-lookup))] ;
-      (fress/write-object w #{1 2 3} #_(map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
+      (fress/write-object w (map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
       (let [bais (ByteArrayInputStream. (.toByteArray baos))]
-        (type (fress/read bais
+        (prn (fress/read bais
                           :handlers (-> (merge fress/clojure-read-handlers
                                                (incognito-read-handlers #_(atom {}) read-handlers))
                                         fress/associative-lookup))))))
+
+
+
+
+
+
+
+
+
+
 
   )
