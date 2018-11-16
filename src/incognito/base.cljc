@@ -17,10 +17,9 @@
                          handlers))))
 
 (defn incognito-reader [read-handlers m]
-  (let [read-handlers (rec-name-parser read-handlers)]
     (if (read-handlers (:tag m))
            ((read-handlers (:tag m)) (:value m))
-           (map->IncognitoTaggedLiteral m))))
+           (map->IncognitoTaggedLiteral m)))
 
 (defn incognito-writer [write-handlers r]
   (let [write-handlers      (rec-name-parser write-handlers)
