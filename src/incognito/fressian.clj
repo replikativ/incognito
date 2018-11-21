@@ -23,7 +23,7 @@
       (let [{:keys [tag value]} (if (isa? (type record) incognito.base.IncognitoTaggedLiteral)
                                   (into {} record) ;; carry on as map
                                   (incognito-writer @write-handlers record))]
-        (.writeTag writer "record" 2)
+        (.writeTag writer "irecord" 2)
         (.writeInt writer (count value))
         (.writeObject writer tag)
         (doseq [e value]
@@ -69,7 +69,7 @@
         (into #{} l)))))
 
 (defn incognito-read-handlers [read-handlers]
-  {"record" (record-reader read-handlers)
+  {"irecord" (record-reader read-handlers)
    "plist"  plist-reader
    "pvec"   pvec-reader
    "set"    set-reader})
@@ -77,7 +77,7 @@
 (defn incognito-write-handlers [write-handlers]
   {clojure.lang.PersistentList           {"plist" plist-writer}
    clojure.lang.PersistentList$EmptyList {"plist" plist-writer}
-   clojure.lang.IRecord                  {"record" (record-writer write-handlers)}
+   clojure.lang.IRecord                  {"irecord" (record-writer write-handlers)}
    clojure.lang.LazySeq                  {"plist" plist-writer}
    clojure.lang.PersistentVector         {"pvec" pvec-writer}})
 

@@ -20,7 +20,7 @@
                                      str
                                      (clojure.string/replace-first  #"/" ".")
                                      symbol)]
-        (write-tag writer "record" 2)
+        (write-tag writer "irecord" 2)
         (writeInt writer (count value))
         (write-object writer tag)
         (doseq [e value]
@@ -80,7 +80,7 @@
   {"plist"   plist-reader
    "pvec"    pvec-reader
    "set"     set-reader
-   "record" (record-reader read-handlers)})
+   "irecord" (record-reader read-handlers)})
 
 (defn incognito-write-handlers [write-handlers]
   {cljs.core/List              plist-writer
