@@ -7,26 +7,27 @@
 
 (defn record-reader [read-handlers]
   (reify ReadHandler
-    (read [_ reader tag component-count]
-      (let [tag (.readObject reader)
-            val (.readObject reader)]
+    (read [_ reader _ component-count]
+      (let [len (.readInt reader)
+            tag (.readObject reader)
+            val (->> (range len)
+                     (map (fn [_] (.readObject reader)))
+                     (map vec)
+                     (into {}))]
         (incognito-reader @read-handlers
-                          {:tag tag :value (:value val)})))))
+                          {:tag tag :value val})))))
 
 (defn record-writer [write-handlers]
   (reify WriteHandler
-    (write [_ w rec]
-      (let [{:keys [tag] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
-                                  (into {} rec) ;; carry on as map
-                                  (incognito-writer @write-handlers rec))]
-        (.writeTag w "record" 2)
-        (.writeObject w tag)
-        (.writeTag w "map" 1)
-        (.beginClosedList ^StreamingWriter w)
-        (doseq [[field value] r]
-          (.writeObject w field true)
-          (.writeObject w value))
-        (.endList ^StreamingWriter w)))))
+    (write [_ writer record]
+      (let [{:keys [tag value]} (if (isa? (type record) incognito.base.IncognitoTaggedLiteral)
+                                  (into {} record) ;; carry on as map
+                                  (incognito-writer @write-handlers record))]
+        (.writeTag writer "record" 2)
+        (.writeInt writer (count value))
+        (.writeObject writer tag)
+        (doseq [e value]
+          (.writeObject writer e))))))
 
 (def plist-reader
   (reify ReadHandler

@@ -9,35 +9,35 @@
             [fress.impl.buffer :as buf]
             [fress.impl.raw-input :as rawIn]))
 
-;;add incognito write-handlers
-(defn- record-writer
+;;add incognito record-writer-handlers
+(defn record-writer
   [write-handlers]
-  (fn [w rec]
+  (fn [writer rec]
     (let [{:keys [tag value] :as r} (if (isa? (type rec) incognito.base.IncognitoTaggedLiteral)
                                       (into {} rec)
                                       (incognito-writer @write-handlers rec))
-          tag                       (-> tag
-                                        str
-                                        (clojure.string/replace-first  #"/" ".")
-                                        symbol)]
-      (write-tag w "record" 2)
-      (write-object w tag)
-      (write-tag w "map" 1)
-      (beginClosedList w)
-      (doseq [[field value] r]
-        (write-object w field true)
-        (write-object w value))
-      (endList w))))
+          tag                    (-> tag
+                                     str
+                                     (clojure.string/replace-first  #"/" ".")
+                                     symbol)]
+        (write-tag writer "record" 2)
+        (writeInt writer (count value))
+        (write-object writer tag)
+        (doseq [e value]
+          (write-object writer e)))))
 
-
-;;add incognito read-handler
-(defn- record-reader
+;;add incognito irecord-read-handler
+(defn record-reader
   [read-handlers]
-  (fn [rdr tag component-count]
-    (let [tag   (read-object rdr)
-          value (read-object rdr)]
+  (fn [reader tag component-count]
+    (let [len (readInt reader)
+          tag (read-object reader)
+          val (->> (range len)
+                   (map (fn [_] (read-object reader)))
+                   (map vec)
+                   (into {}))]
       (incognito-reader @read-handlers
-                        {:tag tag :value (:value value)}))))
+                        {:tag tag :value val}))))
 
 (defn- plist-reader [reader _ _]
   (let [len (readInt reader)]
@@ -77,18 +77,18 @@
   (endList w))
 
 (defn incognito-read-handlers [read-handlers]
-  {"record" (record-reader read-handlers)
-   "plist"   plist-reader
+  {"plist"   plist-reader
    "pvec"    pvec-reader
-   "set"     set-reader})
+   "set"     set-reader
+   "record" (record-reader read-handlers)})
 
 (defn incognito-write-handlers [write-handlers]
-  {cljs.core/List             plist-writer
-   cljs.core/EmptyList        plist-writer
+  {cljs.core/List              plist-writer
+   cljs.core/EmptyList         plist-writer
    cljs.core/PersistentTreeMap write-tree-map
-   "record"                   (record-writer write-handlers)
-   cljs.core/LazySeq          plist-writer
-   cljs.core/PersistentVector pvec-writer})
+   "record"                    (record-writer write-handlers)
+   cljs.core/LazySeq           plist-writer
+   cljs.core/PersistentVector  pvec-writer})
 
 (comment
 
