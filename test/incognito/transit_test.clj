@@ -1,9 +1,7 @@
 (ns incognito.transit-test
   (:require [clojure.test :refer :all]
             [cognitect.transit :as transit]
-            [incognito.transit :refer :all]
-            [clj-time.core :as t]
-            [clj-time.format :as tf])
+            [incognito.transit :refer :all])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]
            [com.cognitect.transit.impl WriteHandlers$MapWriteHandler]))
 

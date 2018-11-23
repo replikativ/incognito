@@ -18,8 +18,7 @@
                     :figwheel     {:nrepl-port       7888
                                    :nrepl-middleware ["cider.nrepl/cider-middleware"
                                                       "cemerick.piggieback/wrap-cljs-repl"]}
-                    :plugins      [[lein-figwheel "0.5.8"]]}
-             :test {:dependencies [[clj-time "0.13.0"]]}}
+                    :plugins      [[lein-figwheel "0.5.8"]]}}
 
   :source-paths ["src"]
   :test-paths ["test"]
