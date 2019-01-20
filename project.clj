@@ -1,4 +1,4 @@
-(defproject io.replikativ/incognito "0.2.5-SNAPSHOT"
+(defproject io.replikativ/incognito "0.2.5"
   :description "Safe transport of unknown record types in distributed systems."
   :url "https://github.com/replikativ/incognito"
   :license {:name "Eclipse Public License"
@@ -8,7 +8,7 @@
                  [org.clojure/data.fressian "0.2.1" :scope "provided"]
                  [com.cognitect/transit-clj "0.8.285" :scope "provided"]
                  [com.cognitect/transit-cljs "0.8.239" :scope "provided"]
-                 [fress "0.3.1"]]
+                 [fress "0.3.1" :scope "provided"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]]
 

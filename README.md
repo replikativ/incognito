@@ -18,7 +18,7 @@ them of course, once you hit efficiency problems. Incognito is at the moment not
 supposed to provide serialization directly to storage, so you have to be able to
 serialize your custom types in memory.
 
-Incognito falls back to a pr-str->read-string roundtrip which is a reasonable,
+Incognito falls back to a `pr-str->read-string` roundtrip which is a reasonable,
 but inefficient and will only work if the type has proper Clojure print+read
 support. 
 
@@ -36,7 +36,7 @@ Add this to your project dependencies:
 Include all serialization libraries you need, e.g. for edn support only:
 ```clojure
 [org.clojure/data.fressian com.cognitect/transit-clj "0.8.297"]
-[io.replikativ/incognito "0.2.2"]
+[io.replikativ/incognito "0.2.5"]
 ```
 
 In general you can control serialization by `write-handlers` and `read-handlers`:
@@ -153,14 +153,21 @@ ClojureScript conform.
 ```
 
 
-
 ## TODO
 
 - move serialization dependencies into dev profile
 
+
+## Changelog
+
+### 0.2.5
+- ClojureScript fressian support (for konserve filestore on node.js). Thanks to
+  Ferdinand Kühne!
+
+
 ## License
 
-Copyright © 2015-2016 Christian Weilbach
+Copyright © 2015-2019 Christian Weilbach, Ferdinand Kühne
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
