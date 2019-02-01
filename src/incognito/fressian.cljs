@@ -86,18 +86,8 @@
   {cljs.core/List              plist-writer
    cljs.core/EmptyList         plist-writer
    cljs.core/PersistentTreeMap write-tree-map
+   cljs.core/MapEntry          plist-writer
    "record"                    (record-writer write-handlers)
    cljs.core/LazySeq           plist-writer
    cljs.core/PersistentVector  pvec-writer})
 
-(comment
-
-  (do
-   (defrecord SomeRecord [f1 f2])
-   (def rec (SomeRecord.  [1 2 2] {:c "213"}))
-   (def buf (fress.api/byte-stream))
-   (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
-   (fress.api/write-object writer rec)
-   (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
-
-)
