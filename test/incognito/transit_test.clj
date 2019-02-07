@@ -16,10 +16,9 @@
                                                             :c "banana"}}
              (with-open [baos (ByteArrayOutputStream.)]
                (let [writer (transit/writer baos :json
-                                            {:handlers {java.util.Map
-                                                        (incognito-write-handler
-                                                         (atom {'incognito.transit_test.Bar
-                                                                (fn [foo] (assoc foo :c "banana"))}))}})]
+                                            {:transform (partial incognito-write-handler (atom {'incognito.transit_test.Bar
+                                                                                                (fn [foo] (assoc foo :c "banana"))}))
+                                             :handlers (incognito-write-record)})]
                  (transit/write writer bar)
                  (let [bais (ByteArrayInputStream. (.toByteArray baos))
                        reader (transit/reader bais :json
@@ -33,9 +32,8 @@
       (is (= bar
              (with-open [baos (ByteArrayOutputStream.)]
                (let [writer (transit/writer baos :json
-                                            {:handlers {java.util.Map
-                                                        (incognito-write-handler
-                                                         (atom {}))}})]
+                                            {:transform (partial incognito-write-handler (atom {}))
+                                             :handlers (incognito-write-record)})]
                  (transit/write writer bar)
                  (let [bais (ByteArrayInputStream. (.toByteArray baos))
                        reader (transit/reader bais :json
@@ -43,9 +41,8 @@
                                                           (incognito-read-handler (atom {'incognito.transit_test.Bar map->Bar}))}})]
                    (with-open [baos (ByteArrayOutputStream.)]
                      (let [writer (transit/writer baos :json
-                                                  {:handlers {java.util.Map
-                                                              (incognito-write-handler
-                                                               (atom {}))}})]
+                                                  {:transform (partial incognito-write-handler (atom {}))
+                                                   :handlers (incognito-write-record)})]
                        (transit/write writer (transit/read reader))
                        (let [bais (ByteArrayInputStream. (.toByteArray baos))
                              reader (transit/reader bais :json
