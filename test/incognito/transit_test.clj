@@ -10,21 +10,21 @@
 (deftest incognito-roundtrip-test
   (testing "Test incognito transport."
     (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
-      (is (= #incognito.base.IncognitoTaggedLiteral{:tag incognito.transit_test.Bar,
+      (is (= #incognito.base.IncognitoTaggedLiteral{:tag   incognito.transit_test.Bar,
                                                     :value {:a [1 2 3],
                                                             :b {:c "Fooos"}
                                                             :c "banana"}}
              (with-open [baos (ByteArrayOutputStream.)]
                (let [writer (transit/writer baos :json
-                                            {:transform (partial incognito-write-handler (atom {'incognito.transit_test.Bar
-                                                                                                (fn [foo] (assoc foo :c "banana"))}))
-                                             :handlers (incognito-write-record)})]
+                                            (incognito-write-handler (atom {'incognito.transit_test.Bar
+                                                                            (fn [foo] (assoc foo :c "banana"))})))]
                  (transit/write writer bar)
-                 (let [bais (ByteArrayInputStream. (.toByteArray baos))
+                 (let [bais   (ByteArrayInputStream. (.toByteArray baos))
                        reader (transit/reader bais :json
-                                              {:handlers {"incognito"
-                                                          (incognito-read-handler (atom {}))}})]
+                                              (incognito-read-handler (atom {})))]
                    (transit/read reader)))))))))
+
+
 
 (deftest double-roundtrip-test
   (testing "Test two roundtrips, one incognito and deserialize at end."
@@ -32,20 +32,16 @@
       (is (= bar
              (with-open [baos (ByteArrayOutputStream.)]
                (let [writer (transit/writer baos :json
-                                            {:transform (partial incognito-write-handler (atom {}))
-                                             :handlers (incognito-write-record)})]
+                                            (incognito-write-handler (atom {})))]
                  (transit/write writer bar)
-                 (let [bais (ByteArrayInputStream. (.toByteArray baos))
+                 (let [bais   (ByteArrayInputStream. (.toByteArray baos))
                        reader (transit/reader bais :json
-                                              {:handlers {"incognito"
-                                                          (incognito-read-handler (atom {'incognito.transit_test.Bar map->Bar}))}})]
+                                              (incognito-read-handler (atom {'incognito.transit_test.Bar map->Bar})))]
                    (with-open [baos (ByteArrayOutputStream.)]
                      (let [writer (transit/writer baos :json
-                                                  {:transform (partial incognito-write-handler (atom {}))
-                                                   :handlers (incognito-write-record)})]
+                                                  (incognito-write-handler (atom {})))]
                        (transit/write writer (transit/read reader))
-                       (let [bais (ByteArrayInputStream. (.toByteArray baos))
+                       (let [bais   (ByteArrayInputStream. (.toByteArray baos))
                              reader (transit/reader bais :json
-                                                    {:handlers {"incognito"
-                                                                (incognito-read-handler (atom {'incognito.transit_test.Bar map->Bar}))}})]
+                                                    (incognito-read-handler (atom {'incognito.transit_test.Bar map->Bar})))]
                          (transit/read reader))))))))))))

@@ -6,17 +6,12 @@
 
 (defrecord WriteRecords [tag value])
 
-(defn incognito-write-record []
-  {WriteRecords
-   (proxy [WriteHandlers$MapWriteHandler] []
-     (tag [_] "incognito")
-     (rep [o] (into {} o)))})
-
 (defn incognito-read-handler [read-handlers]
-  (transit/read-handler
-   (partial incognito-reader @read-handlers)))
+  {:handlers {"incognito"
+              (transit/read-handler
+               (partial incognito-reader @read-handlers))}})
 
-(defn incognito-write-handler
+(defn incognito-write-helper
   "For :transform. Will write any metadata present on the value."
   [write-handlers o]
   (if (record? o)
@@ -26,3 +21,10 @@
         (WriteRecords. tag value)))
     o))
 
+(defn incognito-write-handler
+  [write-handlers]
+  {:transform (partial incognito-write-helper write-handlers)
+   :handlers  {WriteRecords
+               (proxy [WriteHandlers$MapWriteHandler] []
+                 (tag [_] "incognito")
+                 (rep [o] (into {} o)))}})
