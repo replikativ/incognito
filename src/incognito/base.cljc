@@ -8,11 +8,13 @@
            ((read-handlers (:tag m)) (:value m))
            (map->IncognitoTaggedLiteral m)))
 
-(defn cleanup-cljs-ns [s]
-  (str/replace-first s "/" "."))
+(defn normalize-ns [s]
+  (-> s
+     (str/replace-first "/" ".")
+     (str/replace "-" "_")))
 
 (defn incognito-writer [write-handlers r]
-  (let [s                   (-> r type pr-str cleanup-cljs-ns symbol)
+  (let [s                   (-> r type pr-str normalize-ns symbol)
         break-map-recursion (if (map? r) (into {} r) r)
         [tag v]             (if (write-handlers s)
                               [s ((write-handlers s) break-map-recursion)]
