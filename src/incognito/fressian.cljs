@@ -3,9 +3,6 @@
             [fress.api :refer [read-object write-tag write-object]]
             [fress.reader :as r :refer [IFressianReader readInt]]
             [fress.writer :as w :refer [IFressianWriter writeInt beginClosedList endList class-sym]]
-            [fress.impl.codes :as codes]
-            [cljs.reader :refer [read-string
-                                 *tag-table* *default-data-reader-fn*]]
             [fress.impl.buffer :as buf]
             [fress.impl.raw-input :as rawIn]))
 

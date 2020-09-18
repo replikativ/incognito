@@ -1,8 +1,5 @@
 (ns incognito.base
-  #?(:clj (:refer-clojure :exclude [read-string]))
-  (:require #?(:clj [clojure.edn :refer [read-string]]
-               :cljs [cljs.reader :refer [read-string
-                                          *tag-table* *default-data-reader-fn*]])))
+  #?(:cljs (:require [clojure.string :as str])))
 
 (defrecord IncognitoTaggedLiteral [tag value])
 
@@ -11,7 +8,7 @@
      :cljs (into {} (map (fn [[k v]]
                            [(-> k
                                 name
-                                (clojure.string/replace-first  #"(?s)(.*)(\.)" "$1/")
+                                (str/replace-first  #"(?s)(.*)(/)" "$1.")
                                 symbol)
                             v])
                          handlers))))
@@ -31,3 +28,4 @@
                               #_(pr-str->pure-read-string r))]
     {:tag   tag
      :value v}))
+

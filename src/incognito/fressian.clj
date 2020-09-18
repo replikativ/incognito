@@ -1,6 +1,5 @@
 (ns incognito.fressian
-  (:require [clojure.edn :as edn]
-            [clojure.data.fressian :as fress]
+  (:require [clojure.data.fressian :as fress]
             [incognito.base :refer [incognito-reader incognito-writer]])
   (:import [org.fressian StreamingWriter]
            [org.fressian.handlers WriteHandler ReadHandler]))
