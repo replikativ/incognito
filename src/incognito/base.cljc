@@ -1,26 +1,18 @@
 (ns incognito.base
-  #?(:cljs (:require [clojure.string :as str])))
+  (:require [clojure.string :as str]))
 
 (defrecord IncognitoTaggedLiteral [tag value])
-
-(defn rec-name-parser [handlers]
-  #?(:clj  handlers
-     :cljs (into {} (map (fn [[k v]]
-                           [(-> k
-                                name
-                                (str/replace-first  #"(?s)(.*)(/)" "$1.")
-                                symbol)
-                            v])
-                         handlers))))
 
 (defn incognito-reader [read-handlers m]
     (if (read-handlers (:tag m))
            ((read-handlers (:tag m)) (:value m))
            (map->IncognitoTaggedLiteral m)))
 
+(defn cleanup-cljs-ns [s]
+  (str/replace-first s "/" "."))
+
 (defn incognito-writer [write-handlers r]
-  (let [write-handlers      (rec-name-parser write-handlers)
-        s                   (-> r type pr-str symbol)
+  (let [s                   (-> r type pr-str cleanup-cljs-ns symbol)
         break-map-recursion (if (map? r) (into {} r) r)
         [tag v]             (if (write-handlers s)
                               [s ((write-handlers s) break-map-recursion)]
