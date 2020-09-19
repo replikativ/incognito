@@ -155,10 +155,16 @@ ClojureScript conform.
 
 ## TODO
 
+- fix transit support for https://github.com/cognitect/transit-java/issues/31
 - move serialization dependencies into dev profile
 
 
 ## Changelog
+
+### 0.2.6
+- Fix namespace normalization between Clojure and ClojureScript. Bump transit
+  dependencies and deactivate tests because of
+  https://github.com/cognitect/transit-java/issues/31.
 
 ### 0.2.5
 - ClojureScript fressian support (for konserve filestore on node.js). Thanks to
@@ -167,7 +173,7 @@ ClojureScript conform.
 
 ## License
 
-Copyright © 2015-2019 Christian Weilbach, Ferdinand Kühne
+Copyright © 2015-2020 Christian Weilbach, Ferdinand Kühne
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
