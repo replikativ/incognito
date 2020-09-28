@@ -9,3 +9,7 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
+.cpcache
+.shadow-cljs
+node_modules
+resources
