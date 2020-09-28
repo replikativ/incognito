@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
   <groupId>io.replikativ</groupId>
-  <artifactId>Incognito</artifactId>
+  <artifactId>incognito</artifactId>
   <version>0.2.7-SNAPSHOT</version>
-  <name>Incognito</name>
+  <name>incognito</name>
   <description>Safe transport of unknown record types in distributed systems.</description>
   <dependencies>
     <dependency>
@@ -18,7 +18,7 @@
       <artifactId>clojurescript</artifactId>
       <version>1.10.764</version>
     </dependency>
-        <dependency>
+    <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>data.fressian</artifactId>
       <version>0.2.1</version>
