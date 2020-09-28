@@ -13,10 +13,15 @@ workflows:
       - tools/unittest:
           requires:
             - tools/setup
+      - tools/cljstest:
+          requires:
+            - tools/setup
       - tools/build:
+          jarname: "incognito"
           requires:
             - tools/setup
       - tools/deploy-snapshot:
+          jarname: "incognito"
           context: clojars-deploy
           filters:
             branches:
@@ -25,8 +30,10 @@ workflows:
             - tools/setup
             - tools/format
             - tools/unittest
+            - tools/cljstest
             - tools/build
       - tools/deploy-release:
+          jarname: "incognito"
           context: clojars-deploy
           filters:
             branches:
@@ -35,4 +42,5 @@ workflows:
             - tools/setup
             - tools/format
             - tools/unittest
+            - tools/cljstest
             - tools/build

@@ -4,8 +4,9 @@
   <packaging>jar</packaging>
   <groupId>io.replikativ</groupId>
   <artifactId>Incognito</artifactId>
-  <version>0.2.6</version>
+  <version>0.2.7-SNAPSHOT</version>
   <name>Incognito</name>
+  <description>Safe transport of unknown record types in distributed systems.</description>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>

@@ -12,7 +12,7 @@
                   :extra-paths ["test"]}
            :jar {:extra-deps {seancorfield/depstar {:mvn/version "1.1.116"}}
                      :main-opts ["-m" "hf.depstar.jar" "replikativ-incognito.jar"]}
-           :deploy {:extra-deps {deps-deploy/deps-deploy {:mvn/version "0.0.9"}}
+           :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.1.0"}}
                     :main-opts ["-m" "deps-deploy.deps-deploy" "deploy" "replikativ-incognito.jar"]}
            :format {:extra-deps {cljfmt/cljfmt {:mvn/version "0.7.0"}}
                     :main-opts ["-m" "cljfmt.main" "check"]}}}
