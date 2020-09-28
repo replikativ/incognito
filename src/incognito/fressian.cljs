@@ -17,11 +17,11 @@
                                      str
                                      (clojure.string/replace-first  #"/" ".")
                                      symbol)]
-        (write-tag writer "irecord" 2)
-        (writeInt writer (count value))
-        (write-object writer tag)
-        (doseq [e value]
-          (write-object writer e)))))
+      (write-tag writer "irecord" 2)
+      (writeInt writer (count value))
+      (write-object writer tag)
+      (doseq [e value]
+        (write-object writer e)))))
 
 ;;add incognito irecord-read-handler
 (defn record-reader
@@ -63,7 +63,7 @@
 
 (defn- set-reader [reader _ _]
   (let [^List l (read-object reader)]
-        (into #{} l)))
+    (into #{} l)))
 
 (defn- write-tree-map [w m]
   (write-tag w "map" 1)
@@ -90,11 +90,9 @@
 (comment
 
   (do
-   (defrecord SomeRecord [f1 f2])
-   (def rec (SomeRecord.  [1 2 2] {:c "213"}))
-   (def buf (fress.api/byte-stream))
-   (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
-   (fress.api/write-object writer rec)
-   (fress.api/read buf :handlers (incognito-read-handlers (atom {}))))
-
-)
+    (defrecord SomeRecord [f1 f2])
+    (def rec (SomeRecord.  [1 2 2] {:c "213"}))
+    (def buf (fress.api/byte-stream))
+    (def writer (fress.api/create-writer buf :handlers (incognito-write-handlers (atom {'incognito.fressian.SomeRecord (fn [foo] (println "foos") (assoc foo :c "donkey"))}))))
+    (fress.api/write-object writer rec)
+    (fress.api/read buf :handlers (incognito-read-handlers (atom {})))))
