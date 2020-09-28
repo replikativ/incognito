@@ -12,3 +12,4 @@ pom.xml.asc
 .shadow-cljs
 node_modules
 resources
+out/

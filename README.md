@@ -1,5 +1,13 @@
 # incognito
 
+<p align="center">
+<a href="https://clojurians.slack.com/archives/CB7GJAN0L"><img src="https://img.shields.io/badge/clojurians%20slack-join%20channel-blueviolet"/></a>
+<a href="https://clojars.org/io.replikativ/incognito"> <img src="https://img.shields.io/clojars/v/io.replikativ/incognito.svg" /></a>
+<a href="https://circleci.com/gh/replikativ/incognito"><img src="https://circleci.com/gh/replikativ/incognito.svg?style=shield"/></a>
+<a href="https://github.com/replikativ/incognito/tree/development"><img src="https://img.shields.io/github/last-commit/replikativ/incognito/development"/></a>
+<a href="https://versions.deps.co/replikativ/incognito" title="Dependencies Status"><img src="https://versions.deps.co/replikativ/incognito/status.svg" /></a>
+</p>
+
 Different Clojure(Script) serialization protocols like `edn`, `fressian` or
 `transit` offer different ways to serialize custom types. In general
 they fall back to maps for unknown record types, which is a reasonable
