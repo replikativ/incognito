@@ -18,8 +18,7 @@
         break-map-recursion (if (map? r) (into {} r) r)
         [tag v]             (if (write-handlers s)
                               [s ((write-handlers s) break-map-recursion)]
-                              [s break-map-recursion]
-                              #_(pr-str->pure-read-string r))]
+                              [s break-map-recursion])]
     {:tag   tag
      :value v}))
 

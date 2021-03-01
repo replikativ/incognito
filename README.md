@@ -9,51 +9,49 @@
 </p>
 
 Different Clojure(Script) serialization protocols like `edn`, `fressian` or
-`transit` offer different ways to serialize custom types. In general
-they fall back to maps for unknown record types, which is a reasonable
-default in many situations. But when you build a distributed data
-management system parts of your system might not care about the record
-types while others do. This library safely wraps unknown record types
-and therefore allows to unwrap them later. It also unifies record
-serialization between `fressian` and `transit` as long as you can
-express your serialization format in Clojure's default datastructures.
+`transit` offer different ways to serialize custom types. In general they fall
+back to maps for unknown Clojure record types, which is a reasonable default in
+many situations. But when you build a distributed data management system parts
+of your system might not care about the record types while others do. This
+library safely wraps unknown record types and therefore allows to unwrap them
+later. It also unifies record serialization between `fressian` and `transit` as
+long as you can express your serialization format in Clojure's default
+datastructures.
 
-The general idea is that most custom Clojure datatypes (either records or
-deftypes) can be expressed in Clojure datastructures if you do not need a custom
-binary format, e.g. for efficiency or performance. With incognito you do not
-need custom handlers for every serialization format. But you can still provide
-them of course, once you hit efficiency problems. Incognito is at the moment not
+The general idea is that most custom Clojure datatypes (in particular records)
+can be expressed in Clojure datastructures if you do not need a custom binary
+format, e.g. for efficiency or performance. With incognito you do not need
+custom handlers for every serialization format. But you can still provide them
+of course, once you hit efficiency problems. Incognito is at the moment not
 supposed to provide serialization directly to storage, so you have to be able to
 serialize your custom types in memory.
 
-Incognito falls back to a `pr-str->read-string` roundtrip which is a reasonable,
-but inefficient and will only work if the type has proper Clojure print+read
-support. 
+## Normalization
 
-We use it for instance to carry the custom type of
-a [datascript db](https://github.com/tonsky/datascript)
-in [topiq](https://github.com/replikativ/topiq). You don't need to provide a
-write handler for incognito except for efficiency reasons or if your type is not
-pr-strable (in which case you should make it then first).
+All types are normalized between Clojure and ClojureScript, where for
+ClojureScript the namespace separator `/` is replaced by `.` and `-` by `_`.
+This means you need to define your handlers with `.` and `_` on all runtimes, an example is shown below.
+
 
 ## Usage
 
 Add this to your project dependencies:
 [![Clojars Project](http://clojars.org/io.replikativ/incognito/latest-version.svg)](http://clojars.org/io.replikativ/incognito)
 
-Include all serialization libraries you need, e.g. for edn support only:
+Include all serialization libraries you need:
 ```clojure
 [org.clojure/data.fressian com.cognitect/transit-clj "0.8.297"]
-[io.replikativ/incognito "0.2.5"]
+[io.replikativ/incognito "0.2.7"]
 ```
 
-In general you can control serialization by `write-handlers` and `read-handlers`:
+In general you can control serialization by `write-handlers` and
+`read-handlers`,
 
 ```clojure
 (defrecord Bar [a b])
 
-(def write-handlers (atom {'user.Bar (fn [bar] bar)}))
-(def read-handlers (atom {'user.Bar map->Bar}))
+(def write-handlers (atom {'my_user.ns.Bar (fn [bar] bar)}))
+(def read-handlers (atom {'my_user.ns.Bar map->Bar}))
 ```
 
 To handle custom non-record types you have to transform it into a readable
@@ -77,7 +75,7 @@ writer:
   {:tag 'org.joda.time.DateTime, :value "2017-04-17T13:11:29.977Z"})
 
 ```
-*NOTE*: The syntax quote for the read handler is necessary so you can 
+*NOTE*: The syntax quote for the read handler is necessary such that you can 
 deserialize unknown classes.
 
 A write-handler has to return an associative datastructure which is
@@ -91,7 +89,7 @@ can wrap the serialization for its own handlers.
 
 (Extracted from the tests):
 
-### edn
+### edn strings
 
 ```clojure
 (require '[incognito.edn :refer [read-string-safe]])
@@ -150,16 +148,6 @@ can wrap the serialization for its own handlers.
                            fress/associative-lookup)))))))
 ```
 
-## ClojureScript
-
-For dashed namespace names you need a custom printer to be
-ClojureScript conform.
-
-```clojure
-(defmethod print-method some_namespace.Bar [v ^java.io.Writer w]
-  (.write w (str "#some-namespace.Bar" (into {} v))))
-```
-
 
 ## TODO
 
@@ -181,7 +169,7 @@ ClojureScript conform.
 
 ## License
 
-Copyright © 2015-2020 Christian Weilbach, Ferdinand Kühne
+Copyright © 2015-2021 Christian Weilbach, Ferdinand Kühne
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
