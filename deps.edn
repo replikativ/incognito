@@ -4,7 +4,7 @@
         org.clojure/data.fressian  {:mvn/version "0.2.1"}
         com.cognitect/transit-clj  {:mvn/version "0.8.319"}
         com.cognitect/transit-cljs {:mvn/version "0.8.256"}
-        fress                      {:mvn/version "0.3.1"}}
+        fress                      {:mvn/version "0.3.2"}}
  :aliases {:cljs {:extra-deps {thheller/shadow-cljs {:mvn/version "2.10.21"}
                                binaryage/devtools   {:mvn/version "1.0.2"}}
                   :extra-paths ["test"]}
