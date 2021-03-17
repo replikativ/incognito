@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>io.replikativ</groupId>
   <artifactId>incognito</artifactId>
-  <version>0.2.7-SNAPSHOT</version>
+  <version>0.2.7</version>
   <name>incognito</name>
   <description>Safe transport of unknown record types in distributed systems.</description>
   <dependencies>
