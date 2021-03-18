@@ -20,32 +20,30 @@
   (transit/read-handler
    (partial incognito-reader @read-handlers)))
 
-
 (comment
   (import '[java.io ByteArrayInputStream ByteArrayOutputStream]
-          '[com.cognitect.transit.impl WriteHandlers$MapWriteHandler]) 
+          '[com.cognitect.transit.impl WriteHandlers$MapWriteHandler])
 
-  (defrecord Foo [a b]) 
+  (defrecord Foo [a b])
 
-  (import '[com.cognitect.transit.impl WriteHandlerMap]) 
+  (import '[com.cognitect.transit.impl WriteHandlerMap])
 
-  (import '[com.cognitect.transit TransitFactory]) 
+  (import '[com.cognitect.transit TransitFactory])
 
-  (get (WriteHandlerMap/defaults) java.util.Map) 
+  (get (WriteHandlerMap/defaults) java.util.Map)
 
-  (keys (WriteHandlerMap/defaults)) 
+  (keys (WriteHandlerMap/defaults))
 
-  (get (TransitFactory/defaultWriteHandlers) java.util.Map) 
+  (get (TransitFactory/defaultWriteHandlers) java.util.Map)
 
   (map pr-str (keys (TransitFactory/defaultWriteHandlers)))
 
-  (isa? (type (Foo. 1 2)) java.util.Map) 
-
+  (isa? (type (Foo. 1 2)) java.util.Map)
 
   (with-open [baos (ByteArrayOutputStream.)]
     (let [writer (transit/writer baos :json
                                  {:handlers {clojure.lang.PersistentArrayMap (incognito-write-handler
-                                                            (atom {'incognito.transit.Foo (fn [foo] (println "foo") (assoc foo :c "banana"))}))}})]
+                                                                              (atom {'incognito.transit.Foo (fn [foo] (println "foo") (assoc foo :c "banana"))}))}})]
       (transit/write writer (map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
       (let [bais (ByteArrayInputStream. (.toByteArray baos))
             reader (transit/reader bais :json {:handlers {"incognito" (incognito-read-handler (atom {'incognito.transit.Foo map->Foo}))}})]

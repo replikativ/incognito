@@ -26,8 +26,6 @@
                          (incognito-reader read-handlers {:tag tag :value value})))]
          (read-string s)))))
 
-
-
 (comment
   (defrecord Foo [a b])
 

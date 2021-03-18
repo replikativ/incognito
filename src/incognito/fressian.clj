@@ -80,7 +80,6 @@
    clojure.lang.LazySeq                  {"plist" plist-writer}
    clojure.lang.PersistentVector         {"pvec" pvec-writer}})
 
-
 (comment
 
   (import '[java.io ByteArrayInputStream ByteArrayOutputStream]
@@ -100,18 +99,6 @@
       (fress/write-object w (map->Foo {:a [1 2 3] :b {:c "Fooos"}}))
       (let [bais (ByteArrayInputStream. (.toByteArray baos))]
         (prn (fress/read bais
-                          :handlers (-> (merge fress/clojure-read-handlers
-                                               (incognito-read-handlers #_(atom {}) read-handlers))
-                                        fress/associative-lookup))))))
-
-
-
-
-
-
-
-
-
-
-
-  )
+                         :handlers (-> (merge fress/clojure-read-handlers
+                                              (incognito-read-handlers #_(atom {}) read-handlers))
+                                       fress/associative-lookup)))))))
