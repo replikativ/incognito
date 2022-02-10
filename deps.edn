@@ -1,25 +1,25 @@
 {:paths   ["src"]
- :deps    {org.clojure/clojure        {:mvn/version "1.10.1"}
-           org.clojure/clojurescript  {:mvn/version "1.10.764"}
-           org.clojure/data.fressian  {:mvn/version "0.2.1"}
-           com.cognitect/transit-clj  {:mvn/version "0.8.319"}
-           com.cognitect/transit-cljs {:mvn/version "0.8.256"}
-           fress/fress                {:mvn/version "0.3.2"}
-           org.clojure/tools.cli     {:mvn/version "1.0.206"}}
- :aliases {:cljs   {:extra-deps  {thheller/shadow-cljs {:mvn/version "2.10.21"}
-                                  binaryage/devtools   {:mvn/version "1.0.2"}}
+ :deps    {org.clojure/clojure        {:mvn/version "1.10.3"}
+           org.clojure/clojurescript  {:mvn/version "1.11.4"}
+           org.clojure/data.fressian  {:mvn/version "1.0.0"}
+           com.cognitect/transit-clj  {:mvn/version "1.0.329"}
+           com.cognitect/transit-cljs {:mvn/version "0.8.269"}
+           fress/fress                {:mvn/version "0.3.3"}
+           org.clojure/tools.cli      {:mvn/version "1.0.206"}}
+ :aliases {:cljs   {:extra-deps  {thheller/shadow-cljs {:mvn/version "2.17.0"}
+                                  binaryage/devtools   {:mvn/version "1.0.4"}}
                     :extra-paths ["test"]}
-           :test   {:extra-deps  {lambdaisland/kaocha {:mvn/version "1.0.641"}
+           :test   {:extra-deps  {lambdaisland/kaocha                  {:mvn/version "1.62.993"}
                                   io.github.cognitect-labs/test-runner {:git/tag "v0.5.0"
                                                                         :git/sha "48c3c67"}}
                     :extra-paths ["test"]}
-           :build  {:deps       {io.github.seancorfield/build-clj {:git/tag "v0.6.6"
-                                                                   :git/sha "171d5f1"}
+           :build  {:deps       {io.github.seancorfield/build-clj {:git/tag "v0.6.7"
+                                                                   :git/sha "22c2d09"}
                                  borkdude/gh-release-artifact     {:git/url "https://github.com/borkdude/gh-release-artifact"
                                                                    :sha     "a83ee8da47d56a80b6380cbb6b4b9274048067bd"}
                                  babashka/babashka.curl           {:mvn/version "0.1.1"}
                                  babashka/fs                      {:mvn/version "0.1.2"}
-                                 cheshire/cheshire                {:mvn/version "5.10.1"}}
+                                 cheshire/cheshire                {:mvn/version "5.10.2"}}
                     :ns-default build}
-           :format {:extra-deps {cljfmt/cljfmt {:mvn/version "0.7.0"}}
+           :format {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
                     :main-opts  ["-m" "cljfmt.main" "check"]}}}
