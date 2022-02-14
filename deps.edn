@@ -22,4 +22,6 @@
                                  cheshire/cheshire                {:mvn/version "5.10.2"}}
                     :ns-default build}
            :format {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
-                    :main-opts  ["-m" "cljfmt.main" "check"]}}}
+                    :main-opts  ["-m" "cljfmt.main" "check"]}
+           :ffix   {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
+                    :main-opts  ["-m" "cljfmt.main" "fix"]}}}

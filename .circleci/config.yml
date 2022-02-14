@@ -6,7 +6,8 @@ orbs:
 workflows:
   build-test-and-deploy:
     jobs:
-      - tools/setup
+      - tools/setup:
+          setup_cljs: true
       - tools/format:
           requires:
             - tools/setup
@@ -29,8 +30,6 @@ workflows:
           requires:
             - tools/setup
             - tools/format
-            - tools/unittest
-            - tools/cljstest
             - tools/build
       - tools/deploy-release:
           jarname: "incognito"

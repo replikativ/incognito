@@ -43,9 +43,7 @@
 
 (defn deploy "Deploy the JAR to Clojars." [opts]
   (-> opts
-      (assoc :installer :remote
-             :artifact jar-file
-             :pom-file (b/pom-path {:lib lib :class-dir class-dir}))
+      (assoc :lib lib :version version)
       (bb/deploy)))
 
 (defn release
@@ -59,15 +57,3 @@
       :url
       println))
 
-
-(comment
-
-  (clean nil)
-
-  (jar nil)
-
-  (install nil)
-
-  (test nil)
-
-  )
