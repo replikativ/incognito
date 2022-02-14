@@ -70,7 +70,7 @@ jobs:
           condition: <<parameters.build_cljs>>
           steps:
             - run:
-                name: CLJS build
+                name: compile_cljs
               command: npx shadow-cljs compile ci
               no_output_timeout: 5m
       - persist_to_workspace:
@@ -93,10 +93,10 @@ jobs:
           command: clojure -Sthreads 1 -T:build test
           no_output_timeout: 5m
       - when:
-          condition: <<parameters.build_cljs>>
+          condition: <<parameters.test_cljs>>
           steps:
             - run:
-                name: CLJS tests
+                name: karma_test
                 command: ./bin/run-cljs-tests
                 no_output_timeout: 5m
   deploy:
