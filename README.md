@@ -2,10 +2,9 @@
 
 <p align="center">
 <a href="https://clojurians.slack.com/archives/CB7GJAN0L"><img src="https://img.shields.io/badge/clojurians%20slack-join%20channel-blueviolet"/></a>
-<a href="https://clojars.org/io.replikativ/incognito"> <img src="https://img.shields.io/clojars/v/io.replikativ/incognito.svg" /></a>
+<a href="https://clojars.org/org.replikativ/incognito"> <img src="https://img.shields.io/clojars/v/org.replikativ/incognito.svg" /></a>
 <a href="https://circleci.com/gh/replikativ/incognito"><img src="https://circleci.com/gh/replikativ/incognito.svg?style=shield"/></a>
 <a href="https://github.com/replikativ/incognito/tree/development"><img src="https://img.shields.io/github/last-commit/replikativ/incognito/development"/></a>
-<a href="https://versions.deps.co/replikativ/incognito" title="Dependencies Status"><img src="https://versions.deps.co/replikativ/incognito/status.svg" /></a>
 </p>
 
 Different Clojure(Script) serialization protocols like `edn`, `fressian` or
@@ -36,13 +35,8 @@ This means you need to define your handlers with `.` and `_` on all runtimes, an
 ## Usage
 
 Add this to your project dependencies:
-[![Clojars Project](http://clojars.org/io.replikativ/incognito/latest-version.svg)](http://clojars.org/io.replikativ/incognito)
 
-Include all serialization libraries you need:
-```clojure
-[org.clojure/data.fressian com.cognitect/transit-clj "0.8.297"]
-[io.replikativ/incognito "0.2.7"]
-```
+[![Clojars Project](http://clojars.org/org.replikativ/incognito/latest-version.svg)](http://clojars.org/org.replikativ/incognito)
 
 In general you can control serialization by `write-handlers` and
 `read-handlers`,

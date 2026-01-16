@@ -4,7 +4,7 @@
             [borkdude.gh-release-artifact :as gh]
             [org.corfield.build :as bb]))
 
-(def lib 'io.replikativ/incognito)
+(def lib 'org.replikativ/incognito)
 (def version (format "0.3.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
