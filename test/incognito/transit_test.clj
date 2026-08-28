@@ -7,6 +7,29 @@
 
 (defrecord Bar [a b])
 
+(deftest super-delegation-test
+  (testing "a non-record falls through to WriteHandlers$MapWriteHandler"
+    ;; The two roundtrip tests below are disabled, so this is the only live
+    ;; cover for the write handler. It pins the branch that delegates to the
+    ;; superclass, which is the half that silently breaks if the `tag`/`rep`
+    ;; super calls stop reaching it.
+    ;;
+    ;; Registered on APersistentMap, NOT java.util.Map: transit resolves a
+    ;; Clojure map to a more specific default handler than java.util.Map, so
+    ;; registering there leaves the handler installed but never called, and the
+    ;; test passes no matter what the handler does.
+    (let [plain {:a 1 :b {:c "nested"} :d [1 2 3]}
+          json  (with-open [baos (ByteArrayOutputStream.)]
+                  (let [w (transit/writer baos :json
+                                          {:handlers {clojure.lang.APersistentMap
+                                                      (incognito-write-handler (atom {}))}})]
+                    (transit/write w plain)
+                    (String. (.toByteArray baos))))]
+      (is (= "[\"^ \",\"~:a\",1,\"~:b\",[\"^ \",\"~:c\",\"nested\"],\"~:d\",[1,2,3]]" json))
+      (is (= plain
+             (transit/read (transit/reader (ByteArrayInputStream. (.getBytes json))
+                                           :json {})))))))
+
 #_(deftest incognito-roundtrip-test
     (testing "Test incognito transport."
       (let [bar (map->Bar {:a [1 2 3] :b {:c "Fooos"}})]
