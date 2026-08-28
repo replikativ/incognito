@@ -4,17 +4,24 @@
   (:import [com.cognitect.transit.impl WriteHandlers$MapWriteHandler]))
 
 (defn incognito-write-handler [write-handlers]
+  ;; `proxy-super` expands to `(. this <meth> ...)` with `this` untyped, so both
+  ;; super calls resolve reflectively on every non-record value written. It is
+  ;; expanded here instead: `proxy-call-with-super` is what performs the
+  ;; unbinding that makes the call reach the superclass rather than recurse,
+  ;; and writing it out is what lets the target carry a type hint.
   (proxy [WriteHandlers$MapWriteHandler] []
     (tag [o]
       (if (isa? (type o) clojure.lang.IRecord)
         "incognito"
-        (proxy-super tag o)))
+        (proxy-call-with-super
+         #(.tag ^WriteHandlers$MapWriteHandler this o) this "tag")))
     (rep [o]
       (if (isa? (type o)  clojure.lang.IRecord)
         (if (isa? (type o) incognito.base.IncognitoTaggedLiteral)
           (into {} o) ;; carry on as map
           (incognito-writer @write-handlers o))
-        (proxy-super rep o)))))
+        (proxy-call-with-super
+         #(.rep ^WriteHandlers$MapWriteHandler this o) this "rep")))))
 
 (defn incognito-read-handler [read-handlers]
   (transit/read-handler
